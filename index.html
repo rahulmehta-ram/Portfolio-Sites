@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+        }
+        
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+
+        /* Hover animations */
+        .hover-lift {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Glassmorphism card effect */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-10 px-4 selection:bg-indigo-500 selection:text-white">
+
+    <!-- Main Container (Phone width optimized, but expands on desktop) -->
+    <main class="w-full max-w-md md:max-w-2xl animate-fade-in-up">
+        
+        <!-- Profile Section -->
+        <div class="flex flex-col items-center text-center mb-8">
+            <div class="relative group">
+                <!-- Profile Image Placeholder -->
+                <div class="w-28 h-28 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 p-1 mb-4 shadow-lg shadow-indigo-500/20">
+                    <img 
+                        src="https://married-turquoise-zpufseoufn-bk6fqqtk1i.edgeone.dev/Screenshot%202025-11-28%20at%2011.51.06%E2%80%AFPM.png" 
+                        alt="Profile Picture" 
+                        class="w-full h-full rounded-full bg-slate-800 object-cover border-4 border-slate-900"
+                        onerror="this.src='https://via.placeholder.com/150?text=User'"
+                    >
+                </div>
+                <div class="absolute bottom-4 right-0 bg-green-500 w-4 h-4 rounded-full border-4 border-slate-900" title="Available for work"></div>
+            </div>
+            
+            <h1 class="text-2xl font-bold tracking-tight">Rahul Mehta</h1>
+            <p class="text-slate-400 mt-1 max-w-xs">Building digital products & efficient code. Passionate about UI/UX and Open Source.</p>
+            
+            <!-- Tags -->
+            <div class="flex flex-wrap justify-center gap-2 mt-4">
+                <span class="px-3 py-1 text-xs font-medium rounded-full bg-slate-800 text-indigo-400 border border-slate-700">Developer</span>
+                <span class="px-3 py-1 text-xs font-medium rounded-full bg-slate-800 text-purple-400 border border-slate-700">Designer</span>
+                <span class="px-3 py-1 text-xs font-medium rounded-full bg-slate-800 text-emerald-400 border border-slate-700">Freelancer</span>
+            </div>
+        </div>
+
+        <!-- Social Links (Row) -->
+        <div class="flex justify-center gap-4 mb-10">
+            <!-- GitHub -->
+            <a href="https://github.com/rahulmehta-ram" target="_blank" class="p-3 rounded-full bg-slate-800 text-white hover:bg-slate-700 hover:text-white transition-colors border border-slate-700 hover-lift" aria-label="GitHub">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            </a>
+            <!-- Twitter / X -->
+            <a href="#" target="_blank" class="p-3 rounded-full bg-slate-800 text-white hover:bg-slate-700 hover:text-white transition-colors border border-slate-700 hover-lift" aria-label="Twitter">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
+            </a>
+            <!-- LinkedIn -->
+            <a href="#" target="_blank" class="p-3 rounded-full bg-slate-800 text-white hover:bg-blue-600 hover:text-white transition-colors border border-slate-700 hover-lift" aria-label="LinkedIn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
+            <!-- Email (Copy Action) -->
+            <button id="copyEmailBtn" class="p-3 rounded-full bg-slate-800 text-white hover:bg-emerald-600 hover:text-white transition-colors border border-slate-700 hover-lift relative" aria-label="Copy Email">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <!-- Tooltip -->
+                <span id="copyTooltip" class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-xs px-2 py-1 rounded opacity-0 transition-opacity whitespace-nowrap pointer-events-none">Copy Email</span>
+            </button>
+        </div>
+
+        <!-- Section Title -->
+        <h2 class="text-xl font-bold mb-4 px-1 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            Featured Projects
+        </h2>
+
+        <!-- Projects Grid -->
+        <div class="grid grid-cols-1 gap-4 mb-10">
+            
+            <!-- Project Card 1 -->
+            <a href="#" class="glass-card p-4 rounded-xl flex items-center gap-4 hover-lift group no-underline">
+                <div class="w-16 h-16 rounded-lg bg-indigo-900/50 flex items-center justify-center text-indigo-400 shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-lg text-slate-100 group-hover:text-indigo-300 transition-colors">Portfolio Site</h3>
+                    <p class="text-sm text-slate-400 truncate">HTML, CSS, Tailwind - Mobile First</p>
+                </div>
+                <div class="text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </div>
+            </a>
+
+            <!-- Project Card 2 -->
+            <a href="#" class="glass-card p-4 rounded-xl flex items-center gap-4 hover-lift group no-underline">
+                <div class="w-16 h-16 rounded-lg bg-emerald-900/50 flex items-center justify-center text-emerald-400 shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-lg text-slate-100 group-hover:text-emerald-300 transition-colors">Dashboard App</h3>
+                    <p class="text-sm text-slate-400 truncate">React, Analytics, Data Viz</p>
+                </div>
+                <div class="text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </div>
+            </a>
+
+            <!-- Project Card 3 -->
+            <a href="#" class="glass-card p-4 rounded-xl flex items-center gap-4 hover-lift group no-underline">
+                <div class="w-16 h-16 rounded-lg bg-pink-900/50 flex items-center justify-center text-pink-400 shrink-0 group-hover:bg-pink-600 group-hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-lg text-slate-100 group-hover:text-pink-300 transition-colors">Game Concept</h3>
+                    <p class="text-sm text-slate-400 truncate">Unity, C#, 3D Modeling</p>
+                </div>
+                <div class="text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </div>
+            </a>
+
+        </div>
+
+        <!-- Links Section -->
+        <h2 class="text-xl font-bold mb-4 px-1 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Quick Links
+        </h2>
+        <div class="flex flex-col gap-3">
+            <a href="#" class="block w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-center py-3 rounded-xl font-medium transition-colors">
+                Read my Blog
+            </a>
+            <a href="#" class="block w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-center py-3 rounded-xl font-medium transition-colors">
+                Download Resume
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-sm text-slate-500 pb-4">
+            <p>&copy; 2024 Rahul Mehta. All rights reserved.</p>
+            <p class="text-xs mt-1">Built with HTML & Tailwind</p>
+        </footer>
+
+    </main>
+    
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-white text-slate-900 px-6 py-3 rounded-full shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 font-medium z-50 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-600"><polyline points="20 6 9 17 4 12"/></svg>
+        Email copied to clipboard!
+    </div>
+
+    <script>
+        // Configuration
+        const email = "contact@example.com"; 
+
+        // Elements
+        const copyBtn = document.getElementById('copyEmailBtn');
+        const toast = document.getElementById('toast');
+        const tooltip = document.getElementById('copyTooltip');
+
+        // Copy Function
+        copyBtn.addEventListener('click', () => {
+            // Copy to clipboard
+            const textarea = document.createElement('textarea');
+            textarea.value = email;
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast();
+            } catch (err) {
+                console.error('Failed to copy', err);
+                alert("Email: " + email); // Fallback
+            }
+            
+            document.body.removeChild(textarea);
+        });
+
+        function showToast() {
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Simple Tooltip logic
+        copyBtn.addEventListener('mouseenter', () => {
+            tooltip.classList.remove('opacity-0');
+        });
+        copyBtn.addEventListener('mouseleave', () => {
+            tooltip.classList.add('opacity-0');
+        });
+    </script>
+</body>
+</html>

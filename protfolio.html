@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Sites</title>
+    <style>
+        /* Modern Reset & Variables */
+        :root {
+            --bg-color: #000000;
+            /* Complex gradient for animation - Deep Blacks */
+            --bg-gradient: linear-gradient(-45deg, #000000, #111111, #000000, #0a0a0a);
+            --card-bg: rgba(20, 20, 20, 0.6); 
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --accent-primary: #38bdf8;
+            --accent-secondary: #818cf8;
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.15);
+            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-color);
+            background-image: var(--bg-gradient);
+            background-size: 400% 400%; /* Make background larger than screen */
+            animation: gradientBG 15s ease infinite; /* Animate the position */
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5rem 1.5rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Background Glow */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: linear-gradient(180deg, rgba(56, 189, 248, 0.15), rgba(129, 140, 248, 0));
+            filter: blur(80px);
+            z-index: -1;
+            pointer-events: none;
+            animation: floatGlow 20s ease-in-out infinite alternate; /* Floating animation for the glow */
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 580px;
+        }
+
+        /* Header Styling */
+        header {
+            margin-bottom: 4rem;
+            text-align: left;
+            /* Removed perspective for flat design */
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+            
+            /* Return to flat gradient text */
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: #ffffff; /* Fallback */
+        }
+
+        /* Removed interactive 3D movement on hover */
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            margin-top: 0.5rem;
+        }
+
+        /* Project List */
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        /* Individual Project Item Wrapper */
+        .project-item {
+            opacity: 0;
+            animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        /* Stagger animations */
+        .project-item:nth-child(1) { animation-delay: 0.1s; }
+        .project-item:nth-child(2) { animation-delay: 0.2s; }
+        .project-item:nth-child(3) { animation-delay: 0.3s; }
+        .project-item:nth-child(4) { animation-delay: 0.4s; }
+
+        /* The Label (#project 01) */
+        .project-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 0.85rem;
+            margin-left: 4px;
+            opacity: 0.9;
+        }
+
+        .project-label::after {
+            content: '';
+            height: 1px;
+            flex-grow: 1;
+            background: linear-gradient(to right, var(--accent-primary), transparent);
+            opacity: 0.3;
+            max-width: 100px;
+        }
+
+        /* The Card/Button */
+        .project-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            
+            /* Glassmorphism */
+            background-color: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            
+            padding: 1.5rem 1.75rem;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Gradient overlay on hover */
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(56, 189, 248, 0.1), rgba(129, 140, 248, 0.1));
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 0;
+        }
+
+        /* Text inside the card */
+        .project-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        /* Arrow Icon */
+        .arrow-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .arrow-icon {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-secondary);
+            stroke-width: 2;
+            transition: var(--transition);
+        }
+
+        /* Hover Effects */
+        .project-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-card:hover .project-name {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .project-card:hover .arrow-wrapper {
+            background: var(--accent-primary);
+            transform: rotate(-45deg);
+        }
+
+        .project-card:hover .arrow-icon {
+            stroke: #0f172a; /* Dark stroke on light bg */
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Background Gradient Animation */
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Floating Glow Animation */
+        @keyframes floatGlow {
+            0% {
+                transform: translateX(-50%) translateY(0) scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translateX(-40%) translateY(-20px) scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateX(-60%) translateY(20px) scale(0.9);
+                opacity: 0.5;
+            }
+        }
+
+        /* Touch Device Optimization (Active State) */
+        /* Gives immediate feedback when tapping on mobile */
+        .project-card:active {
+            transform: scale(0.98);
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-primary);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            body { 
+                padding: 3rem 1rem;
+                overflow-x: hidden; 
+            }
+
+            .container {
+                width: 100%;
+            }
+
+            /* Adjust Title for small screens */
+            h1 { 
+                font-size: 2.5rem; 
+                line-height: 1.2;
+                margin-bottom: 0.5rem;
+            }
+            
+            header {
+                margin-bottom: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .project-list {
+                gap: 1.5rem;
+            }
+
+            .project-card { 
+                padding: 1.25rem 1rem; 
+                min-height: 72px; /* Ensure large touch target */
+            }
+
+            .project-name { 
+                font-size: 1.1rem; 
+            }
+            
+            .project-label {
+                font-size: 0.7rem;
+            }
+        }
+        
+        /* Footer Styling */
+        .footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            opacity: 0.8;
+            padding-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Portfolio Sites</h1>
+            <p class="subtitle">Selected works & digital experiments</p>
+        </header>
+
+        <div class="project-list">
+            
+            <!-- Item 01 -->
+            <div class="project-item">
+                <span class="project-label">#project 01</span>
+                <a href="#" class="project-card">
+                    <span class="project-name">E-Commerce Dashboard</span>
+                    <div class="arrow-wrapper">
+                        <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Item 02 -->
+            <div class="project-item">
+                <span class="project-label">#project 02</span>
+                <a href="#" class="project-card">
+                    <span class="project-name">Working...</span>
+                    <div class="arrow-wrapper">
+                        <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Item 03 -->
+            <div class="project-item">
+                <span class="project-label">#project 03</span>
+                <a href="#" class="project-card">
+                    <span class="project-name">Working...</span>
+                    <div class="arrow-wrapper">
+                        <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Item 04 -->
+            <div class="project-item">
+                <span class="project-label">#project 04</span>
+                <a href="#" class="project-card">
+                    <span class="project-name">Working...</span>
+                    <div class="arrow-wrapper">
+                        <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            Made by Rahul Mehta
+        </div>
+    </div>
+
+</body>
+</html>
