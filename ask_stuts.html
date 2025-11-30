@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhai Bana Raha Hu - Desi Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #000000;
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        .tap-zone {
+            transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+            background: rgba(30, 30, 30, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
+        }
+
+        .tap-zone:hover {
+            background: rgba(50, 50, 50, 0.8);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+        }
+
+        .tap-zone:active {
+            transform: scale(0.95);
+        }
+
+        .floating-text {
+            position: absolute;
+            pointer-events: none;
+            animation: floatUp 2s ease-out forwards;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            z-index: 20;
+            white-space: nowrap;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 0; }
+            20% { transform: translateY(-30px) scale(1.3) rotate(-5deg); opacity: 1; }
+            100% { transform: translateY(-150px) scale(1) rotate(10deg); opacity: 0; }
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-3px, 1px, 0); }
+            20%, 80% { transform: translate3d(5px, -2px, 0); }
+            30%, 50%, 70% { transform: translate3d(-7px, 3px, 0); }
+            40%, 60% { transform: translate3d(7px, -3px, 0); }
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-center text-gray-200 select-none">
+
+    <!-- Header -->
+    <div class="absolute top-6 text-center z-10 w-full px-4">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-500 tracking-wider drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
+            PROJECT STATUS
+        </h1>
+        
+        <!-- Mood & Sanity -->
+        <div class="mt-6 flex flex-col items-center gap-3">
+            <div class="flex items-center gap-2">
+                <span class="text-gray-400 uppercase text-xs tracking-widest">Developer Mood:</span>
+                <span id="mood-text" class="font-bold text-xl text-green-400">Mast Maula 😎</span>
+            </div>
+            <div class="flex items-center justify-center gap-2 text-gray-400 w-full max-w-md px-4">
+                <i class="fas fa-brain text-gray-500"></i>
+                <div class="flex-grow h-3 bg-gray-800 rounded-full overflow-hidden border border-gray-700 relative">
+                    <div id="patience-bar" class="h-full bg-gradient-to-r from-green-400 to-green-600 w-full transition-all duration-300"></div>
+                </div>
+                <i class="fas fa-fire text-red-500"></i>
+            </div>
+            <span class="text-gray-500 text-xs uppercase tracking-widest">Gussa Level</span>
+        </div>
+    </div>
+
+    <!-- Main Tap Area -->
+    <div id="tap-area" class="tap-zone relative w-72 h-72 md:w-96 md:h-96 rounded-full flex flex-col items-center justify-center border-4 cursor-pointer">
+        
+        <!-- Icon -->
+        <div class="text-7xl md:text-8xl mb-4 transition-all duration-300" id="icon-container">
+            <i id="status-icon" class="fas fa-couch text-gray-300"></i>
+        </div>
+
+        <!-- Main Text -->
+        <p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Developer Said:</p>
+        <h2 id="main-text" class="text-2xl md:text-3xl font-bold text-center px-6 leading-tight text-white drop-shadow-lg min-h-[4rem] flex items-center justify-center">
+            Tap to poke bhai
+        </h2>
+
+    </div>
+
+    <!-- Footer Stats -->
+    <div class="absolute bottom-10 text-center text-gray-500">
+        <p class="text-lg">Ungli kiya: <span id="counter" class="text-white font-bold text-2xl">0</span> times</p>
+        <p class="text-sm mt-2 opacity-60">(Mat kar bhai, ro dega woh...)</p>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="tap-sound-1" src="https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3"></audio>
+    <audio id="tap-sound-2" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
+    <audio id="angry-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-cartoon-failure-piano-2519.mp3"></audio>
+
+    <script>
+        const tapArea = document.getElementById('tap-area');
+        const mainText = document.getElementById('main-text');
+        const counterDisplay = document.getElementById('counter');
+        const statusIcon = document.getElementById('status-icon');
+        const iconContainer = document.getElementById('icon-container');
+        const patienceBar = document.getElementById('patience-bar');
+        const moodText = document.getElementById('mood-text');
+        const body = document.body;
+
+        const tapSounds = [
+            document.getElementById('tap-sound-1'),
+            document.getElementById('tap-sound-2')
+        ];
+        const angrySound = document.getElementById('angry-sound');
+
+        let count = 0;
+        let patience = 100;
+        let soundToggle = 0;
+
+        // --- THE DESI DIALOGUE LIST ---
+        
+        // 1. Chill / Normal Excuses (High Patience)
+        const chillDialogues = [
+            "Bhai aabhi bana raha hu sab...",
+            "Are bas 2 min, compile ho raha hai.",
+            "Shanti rakh na meri jaan.",
+            "Ek minute, momos khane aaya hu.",
+            "Code likh raha hu, disturb na kar.",
+            "Abhi 'Zone' mein hu, baad mein aana.",
+            "Thoda sabar kar le bhai.",
+            "Ruko zara... Sabar karo!"
+        ];
+
+        // 2. Annoyed / Desi Sarcasm (Medium Patience)
+        const annoyedDialogues = [
+            "Abey saale! Ruka nahi jata?",
+            "Dimag ka dahi mat kar!",
+            "Kya gunda banega re tu?",
+            "Tujhe kya lagta hai halwa hai?",
+            "Bhai, tu hi bana le aake, ja!",
+            "Dhakkan hai kya be tu?",
+            "Chup! Bilkul chup!",
+            "Keyboard pe chai gir gayi yaar...",
+            "Wifi ke taar chuhe kha gaye.",
+            "Paisa laya? Pehle paisa la!"
+        ];
+
+        // 3. Angry / Roast Mode (Low Patience)
+        const angryDialogues = [
+            "KHOPDI TOD SAALE KA! 😤",
+            "Tera baap yaha chhod ke gaya tha?",
+            "Nalayak insaan! Sharam nahi aati?",
+            "Bheja fry kar diya be!",
+            "Tu ja re... Varna maar khayega.",
+            "Chomu kahin ka!",
+            "Besharam! Bola na baad mein aana!",
+            "Utha le re baba, mujhe nahi isko utha!",
+            "Muh band rakh, varna code delete kar dunga!",
+            "Ghar jaana hai tereko? Nikal!"
+        ];
+
+        const icons = [
+            "fa-couch", "fa-skull", "fa-bomb", "fa-poop", 
+            "fa-middle-finger", "fa-hand-rock", "fa-angry", "fa-ghost"
+        ];
+
+        const floatPhrases = [
+            "ABEY!", "CHUP!", "HAT!", "SAALE!", "GADHE!", 
+            "RUK!", "BHAG!", "DHAKKAN!", "CHOMU!", "😤"
+        ];
+        
+        const colors = [
+            "#FFEB3B", "#FF5722", "#00BCD4", "#76FF03", "#E040FB", "#FF1744"
+        ];
+
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function playRandomTapSound() {
+            soundToggle = 1 - soundToggle;
+            const sound = tapSounds[soundToggle];
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log("Audio play failed:", e));
+        }
+
+        function updateMood(patienceLevel) {
+            let mood, iconClass, barColorClass;
+            
+            if (patienceLevel > 75) {
+                mood = "Mast Maula 😎";
+                iconClass = "text-green-400";
+                barColorClass = "from-green-400 to-green-600";
+            } else if (patienceLevel > 45) {
+                mood = "Chida Hua 😑";
+                iconClass = "text-yellow-400";
+                barColorClass = "from-yellow-400 to-yellow-600";
+            } else if (patienceLevel > 15) {
+                mood = "Dimaag Kharab 😡";
+                iconClass = "text-orange-500 scale-110";
+                barColorClass = "from-orange-400 to-orange-600";
+            } else {
+                mood = "SATAK GAYI 🤬!!";
+                iconClass = "text-red-600 scale-125 animate-pulse";
+                barColorClass = "from-red-500 to-red-700";
+            }
+
+            moodText.textContent = mood;
+            moodText.className = `font-bold text-xl ${patienceLevel > 75 ? 'text-green-400' : patienceLevel > 45 ? 'text-yellow-400' : 'text-red-500'}`;
+            patienceBar.className = `h-full bg-gradient-to-r ${barColorClass} w-full transition-all duration-300`;
+            iconContainer.className = `text-7xl md:text-8xl mb-4 transition-all duration-300 ${iconClass}`;
+        }
+
+        function createFloatingText(x, y, text) {
+            const el = document.createElement('div');
+            el.classList.add('floating-text');
+            el.textContent = text;
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+            el.style.color = getRandomItem(colors);
+            el.style.fontSize = `${Math.random() * 1.5 + 1.2}rem`;
+            // Random rotation for chaos
+            const rot = Math.random() * 40 - 20; 
+            el.style.transform = `rotate(${rot}deg)`;
+            
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 2000);
+        }
+
+        function triggerTap(e) {
+            if(e.type === 'touchstart') e.preventDefault();
+            if (patience <= 0) return;
+
+            playRandomTapSound();
+            count++;
+            counterDisplay.textContent = count;
+
+            // --- DIALOGUE LOGIC BASED ON PATIENCE ---
+            let selectedText = "";
+            
+            // Decrease Patience/Sanity
+            let damage = 4;
+            if (patience < 40) damage = 7; 
+            patience = Math.max(0, patience - damage);
+            patienceBar.style.width = `${patience}%`;
+
+            // Select text based on mood
+            if (patience > 70) {
+                selectedText = getRandomItem(chillDialogues);
+            } else if (patience > 30) {
+                selectedText = getRandomItem(annoyedDialogues);
+            } else {
+                selectedText = getRandomItem(angryDialogues);
+            }
+            
+            // Force first tap text
+            if (count === 1) selectedText = "Bhai aabhi bana raha hu sab...";
+
+            mainText.textContent = selectedText;
+
+            // Update Icon
+            statusIcon.className = `fas ${getRandomItem(icons)}`;
+            
+            updateMood(patience);
+
+            // Handle Interaction Points for floating text
+            let clientX, clientY;
+            if (e.type === 'touchstart') {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            createFloatingText(clientX, clientY, getRandomItem(floatPhrases));
+
+            // Shake effect gets more intense
+            if (patience < 50) {
+                body.classList.add('shake');
+                setTimeout(() => body.classList.remove('shake'), 500);
+            }
+
+            // Game Over State
+            if (patience === 0) {
+                angrySound.play().catch(e => console.log("Audio play failed:", e));
+                mainText.textContent = "BHAG YAHAN SE! 🤬";
+                mainText.classList.add('text-red-500');
+                tapArea.classList.add('animate-pulse', 'border-red-600');
+                
+                setTimeout(() => {
+                    alert("Developer ne laptop tod diya. Ab khush?\n\n(Refresh to apologize)");
+                    tapArea.style.pointerEvents = 'none';
+                }, 800);
+            }
+        }
+
+        // Add Listeners
+        tapArea.addEventListener('mousedown', triggerTap);
+        tapArea.addEventListener('touchstart', triggerTap, { passive: false });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                const rect = tapArea.getBoundingClientRect();
+                const mockEvent = {
+                    type: 'mousedown',
+                    clientX: rect.left + rect.width / 2,
+                    clientY: rect.top + rect.height / 2
+                };
+                triggerTap(mockEvent);
+                tapArea.style.transform = "scale(0.95)";
+                setTimeout(() => tapArea.style.transform = "", 100);
+            }
+        });
+    </script>
+</body>
+</html>
