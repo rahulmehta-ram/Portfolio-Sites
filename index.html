@@ -97,46 +97,14 @@
             <!-- Email (Copy Action) -->
             
             <!-- <button id="copyEmailBtn" class="p-3 rounded-full bg-slate-800 text-white hover:bg-emerald-600 hover:text-white transition-colors border border-slate-700 hover-lift relative" aria-label="Copy email "> -->
-            <!-- <button id="copyEmailBtn" class="p-3 rounded-full bg-slate-800 text-white hover:bg-emerald-600 hover:text-white transition-colors border border-slate-700 hover-lift relative" aria-label="Copy Email"> -->
+            <button id="copyEmailBtn" class="p-3 rounded-full bg-slate-800 text-white hover:bg-emerald-600 hover:text-white transition-colors border border-slate-700 hover-lift relative" aria-label="Copy Email">
             
-                <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                 <!-- Tooltip -->
-                <!-- <span id="copyTooltip" class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-xs px-2 py-1 rounded opacity-0 transition-opacity whitespace-nowrap pointer-events-none">Copy Email</span> -->
-            <!-- </button> -->
-        <!-- </div> -->
+                <span id="copyTooltip" class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-xs px-2 py-1 rounded opacity-0 transition-opacity whitespace-nowrap pointer-events-none">Copy Email</span>
+            </button>
+        </div>
 <!--_____________________________________________________________________________________________________________________________-  -->
-
-<div>
-    <button id="copyEmailBtn" class="p-3 rounded-full bg-slate-800 text-white hover:bg-emerald-600 hover:text-white transition-colors border border-slate-700 hover-lift relative" aria-label="Copy email">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="20" height="16" x="2" y="4" rx="2"/>
-            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-        </svg>
-        <!-- Tooltip -->
-        <span id="copyTooltip" class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-xs px-2 py-1 rounded opacity-0 transition-opacity whitespace-nowrap pointer-events-none">Copy Email</span>
-    </button>
-</div>
-
-<script>
-const copyBtn = document.getElementById('copyEmailBtn');
-const tooltip = document.getElementById('copyTooltip');
-const email = "ramiiii47800@gamil.com";
-
-copyBtn.addEventListener('click', () => {
-    navigator.clipboard.writeText(email).then(() => {
-        tooltip.textContent = "Copied!";
-        tooltip.classList.remove('opacity-0');
-        tooltip.classList.add('opacity-100');
-        setTimeout(() => {
-            tooltip.classList.remove('opacity-100');
-            tooltip.classList.add('opacity-0');
-            tooltip.textContent = "Copy Email";
-        }, 1500);
-    }).catch(err => {
-        console.error("Failed to copy: ", err);
-    });
-});
-</script>
 
 
 
