@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>God Mode: Hand Gesture World Control</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        #webcam-preview {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 150px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            z-index: 10;
+            transform: scaleX(-1); /* Mirror effect */
+            background: #000;
+        }
+
+        #video-element {
+            display: none;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .controls-info {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            max-width: 300px;
+            border-left: 3px solid #00d2ff;
+        }
+
+        .controls-info p {
+            margin: 5px 0;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .icon { margin-right: 10px; font-size: 1.2em; width: 25px; text-align: center; }
+
+        .status {
+            margin-top: 15px;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 4px;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #333;
+            border-top: 5px solid #00d2ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text">Initializing AI Vision...</div>
+    </div>
+
+    <!-- UI Overlay -->
+    <div id="ui-layer">
+        <h1>Celestial Hand</h1>
+        <div class="controls-info">
+            <p><span class="icon">✋</span> <strong>Open:</strong> Explode</p>
+            <p><span class="icon">✊</span> <strong>Fist:</strong> Create</p>
+            <p><span class="icon">☝️</span> <strong>Index:</strong> Divine (Gold)</p>
+            <p><span class="icon">✌️</span> <strong>Peace:</strong> Cyber (Green)</p>
+            <p><span class="icon">🤘</span> <strong>Rock:</strong> Inferno (Fire)</p>
+            <p><span class="icon">🤙</span> <strong>Shaka:</strong> Void (Dark)</p>
+        </div>
+        <div id="status-msg" class="status">Loading Models...</div>
+    </div>
+
+    <!-- Webcam Preview -->
+    <canvas id="webcam-preview"></canvas>
+    <video id="video-element"></video>
+
+    <!-- 3D Scene Container -->
+    <div id="canvas-container"></div>
+
+    <script>
+        // --- 1. CONFIGURATION & STATE ---
+        const config = {
+            particleCount: 15000, 
+            sphereRadius: 25,
+            explosionSpeed: 0.1,
+            returnSpeed: 0.08,
+            palettes: {
+                default: { in: new THREE.Color(0x00d2ff), out: new THREE.Color(0xff4500) }, // Blue/Orange
+                divine: { in: new THREE.Color(0xffd700), out: new THREE.Color(0xffffff) }, // Gold/White
+                cyber: { in: new THREE.Color(0x00ff00), out: new THREE.Color(0x003300) },   // Matrix Green
+                inferno: { in: new THREE.Color(0xff0000), out: new THREE.Color(0xffff00) }, // Red/Yellow
+                void: { in: new THREE.Color(0x4b0082), out: new THREE.Color(0x111111) }    // Indigo/Deep Dark
+            }
+        };
+
+        const state = {
+            isHandDetected: false,
+            gesture: 'none', 
+            explosionFactor: 0, 
+            targetExplosionFactor: 0,
+            rotationSpeedY: 0.002,
+            targetRotationSpeedY: 0.002,
+            currentPalette: { ...config.palettes.default },
+            targetPalette: config.palettes.default
+        };
+
+        // --- 2. THREE.JS SETUP ---
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x000000, 0.02);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 80;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Particle System
+        const geometry = new THREE.BufferGeometry();
+        const positions = [];
+        const originalPositions = [];
+        const velocities = [];
+        const colors = [];
+
+        for (let i = 0; i < config.particleCount; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+            const r = config.sphereRadius;
+
+            const x = r * Math.sin(phi) * Math.cos(theta);
+            const y = r * Math.sin(phi) * Math.sin(theta);
+            const z = r * Math.cos(phi);
+
+            positions.push(x, y, z);
+            originalPositions.push(x, y, z);
+
+            const v = new THREE.Vector3(x, y, z).normalize();
+            const speed = 0.2 + Math.random() * 0.5;
+            velocities.push(v.x * speed, v.y * speed, v.z * speed);
+
+            colors.push(0, 0, 0); 
+        }
+
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({
+            size: 0.6,
+            vertexColors: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        const particleSystem = new THREE.Points(geometry, material);
+        scene.add(particleSystem);
+
+        // --- ANIMATION LOOP ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 1. Rotation Logic
+            state.rotationSpeedY += (state.targetRotationSpeedY - state.rotationSpeedY) * 0.05;
+            particleSystem.rotation.y += state.rotationSpeedY;
+            particleSystem.rotation.x += 0.001;
+
+            // 2. Explosion Logic
+            // Only explode on 'open' or 'shaka' (void mode usually implies expanded space)
+            // Let's make void mode explode too, but inferno stays compact? 
+            // Actually, let's keep explosion strictly to 'open' gesture for mechanics,
+            // but change colors for others. 
+            // EXCEPT: Let's make Void mode slightly expanded (mysterious).
+            
+            if (state.gesture === 'open') state.targetExplosionFactor = 1;
+            else if (state.gesture === 'shaka') state.targetExplosionFactor = 0.5; // Half expanded for Void
+            else state.targetExplosionFactor = 0;
+            
+            if (!state.isHandDetected) state.targetExplosionFactor = 0;
+
+            const explodeSpeed = state.targetExplosionFactor > state.explosionFactor ? config.explosionSpeed : config.returnSpeed;
+            state.explosionFactor += (state.targetExplosionFactor - state.explosionFactor) * explodeSpeed;
+
+            // 3. Color Transition
+            state.currentPalette.in.lerp(state.targetPalette.in, 0.05);
+            state.currentPalette.out.lerp(state.targetPalette.out, 0.05);
+
+            // 4. Update Particles
+            const pos = geometry.attributes.position.array;
+            const col = geometry.attributes.color.array;
+
+            for (let i = 0; i < config.particleCount; i++) {
+                const px = originalPositions[i * 3];
+                const py = originalPositions[i * 3 + 1];
+                const pz = originalPositions[i * 3 + 2];
+
+                const vx = velocities[i * 3];
+                const vy = velocities[i * 3 + 1];
+                const vz = velocities[i * 3 + 2];
+
+                // Add some jitter for Inferno mode
+                let jitterX = 0, jitterY = 0, jitterZ = 0;
+                if (state.gesture === 'rock') {
+                    jitterX = (Math.random() - 0.5) * 1.5;
+                    jitterY = (Math.random() - 0.5) * 1.5;
+                    jitterZ = (Math.random() - 0.5) * 1.5;
+                }
+
+                const expansion = state.explosionFactor * 80;
+
+                pos[i * 3] = px + (vx * expansion) + jitterX;
+                pos[i * 3 + 1] = py + (vy * expansion) + jitterY;
+                pos[i * 3 + 2] = pz + (vz * expansion) + jitterZ;
+
+                const colorMix = state.currentPalette.in.clone().lerp(state.currentPalette.out, state.explosionFactor);
+                
+                col[i * 3] = colorMix.r;
+                col[i * 3 + 1] = colorMix.g;
+                col[i * 3 + 2] = colorMix.b;
+            }
+
+            geometry.attributes.position.needsUpdate = true;
+            geometry.attributes.color.needsUpdate = true;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+
+        // --- 3. MEDIAPIPE LOGIC ---
+        const videoElement = document.getElementById('video-element');
+        const canvasElement = document.getElementById('webcam-preview');
+        const canvasCtx = canvasElement.getContext('2d');
+        const statusMsg = document.getElementById('status-msg');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        function onResults(results) {
+            if (loadingOverlay.style.display !== 'none') {
+                loadingOverlay.style.opacity = 0;
+                setTimeout(() => loadingOverlay.style.display = 'none', 500);
+            }
+
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+            
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                state.isHandDetected = true;
+                const landmarks = results.multiHandLandmarks[0];
+
+                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#00d2ff', lineWidth: 2});
+                drawLandmarks(canvasCtx, landmarks, {color: '#ff4500', lineWidth: 1, radius: 3});
+
+                // Gesture Recognition
+                const wrist = landmarks[0];
+                const handX = 1 - wrist.x; 
+
+                // Rotation Control
+                if (handX < 0.3) state.targetRotationSpeedY = -0.05;
+                else if (handX > 0.7) state.targetRotationSpeedY = 0.05;
+                else state.targetRotationSpeedY = 0.002;
+
+                // Finger Extension Check
+                const isExtended = (tipIdx, pipIdx) => {
+                    const tip = landmarks[tipIdx];
+                    const pip = landmarks[pipIdx];
+                    const distTip = Math.sqrt((tip.x-wrist.x)**2 + (tip.y-wrist.y)**2);
+                    const distPip = Math.sqrt((pip.x-wrist.x)**2 + (pip.y-wrist.y)**2);
+                    return distTip > (distPip * 1.2); 
+                };
+
+                // Thumb is special: check tip vs IP (joint 3) or MCP (joint 2)
+                const thumbUp = isExtended(4, 2); 
+                const indexUp = isExtended(8, 6);
+                const middleUp = isExtended(12, 10);
+                const ringUp = isExtended(16, 14);
+                const pinkyUp = isExtended(20, 18);
+
+                let newGesture = 'unknown';
+                
+                // Logic Flow: Check most specific gestures first
+                
+                if (indexUp && middleUp && ringUp && pinkyUp) {
+                    newGesture = 'open';
+                    state.targetPalette = config.palettes.default;
+                    statusMsg.style.color = "#ff4500";
+                    statusMsg.innerText = "DESTROYING";
+                }
+                else if (indexUp && pinkyUp && !middleUp && !ringUp) {
+                    // Rock / Devil Horns (Thumb usually curled, but we ignore thumb for ease)
+                    newGesture = 'rock';
+                    state.targetPalette = config.palettes.inferno;
+                    statusMsg.style.color = "#ff0000";
+                    statusMsg.innerText = "INFERNO MODE";
+                }
+                else if (thumbUp && pinkyUp && !indexUp && !middleUp && !ringUp) {
+                    // Shaka (Thumb + Pinky)
+                    newGesture = 'shaka';
+                    state.targetPalette = config.palettes.void;
+                    statusMsg.style.color = "#bfa2db";
+                    statusMsg.innerText = "VOID MODE";
+                }
+                else if (indexUp && middleUp && !ringUp && !pinkyUp) {
+                    newGesture = 'peace';
+                    state.targetPalette = config.palettes.cyber;
+                    statusMsg.style.color = "#00ff00";
+                    statusMsg.innerText = "CYBER MODE";
+                }
+                else if (indexUp && !middleUp && !ringUp && !pinkyUp) {
+                    newGesture = 'point';
+                    state.targetPalette = config.palettes.divine;
+                    statusMsg.style.color = "#ffd700";
+                    statusMsg.innerText = "DIVINE MODE";
+                }
+                else if (!indexUp && !middleUp && !ringUp && !pinkyUp) {
+                    newGesture = 'fist';
+                    state.targetPalette = config.palettes.default;
+                    statusMsg.style.color = "#00d2ff";
+                    statusMsg.innerText = "CREATING";
+                }
+                else {
+                    newGesture = 'fist'; 
+                    statusMsg.style.color = "#fff";
+                    statusMsg.innerText = "HOLDING";
+                }
+
+                state.gesture = newGesture;
+
+            } else {
+                state.isHandDetected = false;
+                state.targetRotationSpeedY = 0.002;
+                statusMsg.style.color = "#fff";
+                statusMsg.innerText = "NO HAND DETECTED";
+            }
+            canvasCtx.restore();
+        }
+
+        const hands = new Hands({locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        }});
+
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+
+        hands.onResults(onResults);
+
+        const cameraUtils = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({image: videoElement});
+            },
+            width: 320,
+            height: 240
+        });
+
+        cameraUtils.start();
+
+    </script>
+</body>
+</html>
