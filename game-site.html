@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Selection</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#df2531',
+                            'red-65': 'rgba(223, 37, 49, 0.65)',
+                            'red-45': 'rgba(223, 37, 49, 0.45)',
+                            black: '#000000',
+                            white: '#ffffff',
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Orbitron', 'sans-serif'],
+                        body: ['Open Sans', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Open Sans', sans-serif;
+            background-image: radial-gradient(circle at 50% 0%, #1a0505 0%, #050505 70%);
+        }
+        
+        .box-glow:hover {
+            box-shadow: 0 0 30px rgba(223, 37, 49, 0.4);
+            border-color: #df2531;
+        }
+        
+        /* Outline text effect for numbers */
+        .number-outline {
+            -webkit-text-stroke: 2px #333;
+            color: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .group:hover .number-outline {
+            -webkit-text-stroke: 0px;
+            color: #df2531;
+            text-shadow: 0 0 25px rgba(223, 37, 49, 0.8);
+            transform: scale(1.1);
+        }
+
+        /* Mobile tap highlight remove */
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow flex items-center justify-center py-8 px-3 sm:px-6 lg:px-8">
+        <div class="max-w-7xl w-full">
+            
+            <div class="text-center mb-8 md:mb-12">
+                <h1 class="text-3xl md:text-5xl font-display text-white mb-2 md:mb-4 tracking-tight">SELECT <span class="text-brand-red">LEVEL</span></h1>
+                <div class="h-1 w-24 bg-brand-red mx-auto rounded-full opacity-50"></div>
+            </div>
+
+            <!-- The Grid: Optimized for Phone (2 cols) and Desktop (4 cols) -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+                
+                <!-- Box 1 -->
+                <a href="#" class="group aspect-square bg-black border border-gray-800 rounded-xl relative flex flex-col items-center justify-center transition-all duration-300 transform hover:-translate-y-2 box-glow overflow-hidden active:scale-95">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-black opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="z-10 text-center relative">
+                        <span class="font-display text-6xl md:text-8xl font-black number-outline block">01</span>
+                        <div class="absolute -bottom-6 left-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity text-brand-red text-xs font-mono tracking-widest">START</div>
+                    </div>
+                </a>
+
+                <!-- Box 2 -->
+                <a href="#" class="group aspect-square bg-black border border-gray-800 rounded-xl relative flex flex-col items-center justify-center transition-all duration-300 transform hover:-translate-y-2 box-glow overflow-hidden active:scale-95">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-black opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="z-10 text-center relative">
+                        <span class="font-display text-6xl md:text-8xl font-black number-outline block">02</span>
+                    </div>
+                </a>
+
+                <!-- Box 3 -->
+                <a href="#" class="group aspect-square bg-black border border-gray-800 rounded-xl relative flex flex-col items-center justify-center transition-all duration-300 transform hover:-translate-y-2 box-glow overflow-hidden active:scale-95">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-black opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="z-10 text-center relative">
+                        <span class="font-display text-6xl md:text-8xl font-black number-outline block">03</span>
+                    </div>
+                </a>
+
+                <!-- Box 4 -->
+                <a href="#" class="group aspect-square bg-black border border-gray-800 rounded-xl relative flex flex-col items-center justify-center transition-all duration-300 transform hover:-translate-y-2 box-glow overflow-hidden active:scale-95">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-black opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="z-10 text-center relative">
+                        <span class="font-display text-6xl md:text-8xl font-black number-outline block">04</span>
+                    </div>
+                </a>
+
+                <!-- Box 5 -->
+                <a href="#" class="group aspect-square bg-black border border-gray-800 rounded-xl relative flex flex-col items-center justify-center transition-all duration-300 transform hover:-translate-y-2 box-glow overflow-hidden active:scale-95">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-black opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="z-10 text-center relative">
+                        <span class="font-display text-6xl md:text-8xl font-black number-outline block">05</span>
+                    </div>
+                </a>
+
+                <!-- Box 6 -->
+                <a href="#" class="group aspect-square bg-black border border-gray-800 rounded-xl relative flex flex-col items-center justify-center transition-all duration-300 transform hover:-translate-y-2 box-glow overflow-hidden active:scale-95">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-black opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="z-10 text-center relative">
+                        <span class="font-display text-6xl md:text-8xl font-black number-outline block">06</span>
+                    </div>
+                </a>
+
+                <!-- Box 7 -->
+                <a href="#" class="group aspect-square bg-black border border-gray-800 rounded-xl relative flex flex-col items-center justify-center transition-all duration-300 transform hover:-translate-y-2 box-glow overflow-hidden active:scale-95">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-black opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="z-10 text-center relative">
+                        <span class="font-display text-6xl md:text-8xl font-black number-outline block">07</span>
+                    </div>
+                </a>
+
+                <!-- Box 8 -->
+                <a href="#" class="group aspect-square bg-black border border-gray-800 rounded-xl relative flex flex-col items-center justify-center transition-all duration-300 transform hover:-translate-y-2 box-glow overflow-hidden active:scale-95">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-black opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="z-10 text-center relative">
+                        <span class="font-display text-6xl md:text-8xl font-black number-outline block">08</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-gray-900 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-700 text-xs font-mono">
+            SYSTEM.READY
+        </div>
+    </footer>
+
+</body>
+</html>
