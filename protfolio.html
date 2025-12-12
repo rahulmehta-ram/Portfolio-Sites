@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deep Red Portfolio</title>
     <style>
-        /* --- CSS VARIABLES (Deep Red Palette) --- */
+        /* --- CSS VARIABLES (Deep Red Palette - matching uploaded image) --- */
         :root {
             --bg-color: #000000;
             --card-bg: rgba(10, 10, 10, 0.7); /* Dark transparent background */
@@ -106,6 +106,7 @@
         .project-item:nth-child(2) { animation-delay: 0.2s; }
         .project-item:nth-child(3) { animation-delay: 0.3s; }
         .project-item:nth-child(4) { animation-delay: 0.4s; }
+        .project-item:nth-child(5) { animation-delay: 0.5s; } /* Added stagger for the fifth item */
 
         /* The Label (#project 01) */
         .project-label {
@@ -177,7 +178,7 @@
             transition: var(--transition);
         }
 
-        /* Arrow Icon */
+        /* Arrow Icon (using Lucide icon fallback) */
         .arrow-wrapper {
             display: flex;
             align-items: center;
@@ -269,7 +270,7 @@
 </head>
 <body>
     
-    <!-- Canvas for the Liquid Background -->
+    <!-- Canvas for the Liquid Background (The fluid simulation) -->
     <canvas id="liquid-bg"></canvas>
 
     <div class="container">
@@ -357,7 +358,7 @@
         </div>
     </div>
 
-    <!-- --- JavaScript for Liquid Background Simulation --- -->
+    <!-- --- JavaScript for Liquid Background Simulation (with gravity and mouse interaction) --- -->
     <script>
         window.onload = function() {
             const canvas = document.getElementById('liquid-bg');
@@ -370,10 +371,15 @@
             const GRAVITY = 0.04;
             const DRAG = 0.985;
             const MAX_SPEED = 2;
-            const ACCENT_COLOR = '#df2531';
+            const MOUSE_INFLUENCE_RADIUS = 150; // Area where the mouse affects particles
+            const MOUSE_REPEL_STRENGTH = 0.5; // Strength of mouse push
+            
+            // Color Constants
+            const ACCENT_COLOR = '#df2531'; 
             const BACKGROUND_COLOR = '#000000';
 
             let animationFrameId;
+            let mouse = { x: null, y: null };
 
             // Function to set canvas dimensions
             const resizeCanvas = () => {
@@ -381,10 +387,26 @@
                 canvas.height = window.innerHeight;
             };
 
+            // Event listener for mouse movement (or touch movement)
+            const handleMouseMove = (event) => {
+                if (event.touches) {
+                    mouse.x = event.touches[0].clientX;
+                    mouse.y = event.touches[0].clientY;
+                } else {
+                    mouse.x = event.clientX;
+                    mouse.y = event.clientY;
+                }
+            };
+            
+            // Event listener for mouse/touch end (reset influence)
+            const handleMouseOut = () => {
+                mouse.x = null;
+                mouse.y = null;
+            };
+
             // Particle Class
             class Particle {
                 constructor(w, h) {
-                    // Start particles randomly across the screen
                     this.x = Math.random() * w;
                     this.y = Math.random() * h;
                     this.radius = 40 + Math.random() * 60;
@@ -393,33 +415,44 @@
                 }
 
                 update(w, h) {
-                    // Apply gravity
-                    this.vy += GRAVITY;
+                    // --- 1. Apply Mouse Interaction (The "Water" Disturbance) ---
+                    if (mouse.x !== null && mouse.y !== null) {
+                        const dx = this.x - mouse.x;
+                        const dy = this.y - mouse.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
 
-                    // Apply drag
+                        if (distance < MOUSE_INFLUENCE_RADIUS) {
+                            const angle = Math.atan2(dy, dx);
+                            // Exponentially stronger repulsion closer to the mouse
+                            const force = MOUSE_REPEL_STRENGTH * (1 - distance / MOUSE_INFLUENCE_RADIUS); 
+                            
+                            this.vx += Math.cos(angle) * force;
+                            this.vy += Math.sin(angle) * force;
+                        }
+                    }
+
+                    // --- 2. Apply Physics ---
+                    this.vy += GRAVITY;
                     this.vx *= DRAG;
                     this.vy *= DRAG;
-
-                    // Limit speed
                     this.vx = Math.max(-MAX_SPEED, Math.min(this.vx, MAX_SPEED));
                     this.vy = Math.max(-MAX_SPEED, Math.min(this.vy, MAX_SPEED));
 
-                    // Update position
+                    // --- 3. Update Position ---
                     this.x += this.vx;
                     this.y += this.vy;
 
-                    // Wall collision (bounce softly)
+                    // --- 4. Wall Collision & Recycling ---
                     if (this.x - this.radius < 0 || this.x + this.radius > w) {
-                        this.vx *= -0.7; // Softer bounce
+                        this.vx *= -0.7; // Soft bounce
                         this.x = this.x - this.radius < 0 ? this.radius : w - this.radius;
                     }
 
                     if (this.y - this.radius < 0) {
-                        // Bounce off top
                         this.vy *= -0.4;
                         this.y = this.radius;
                     } else if (this.y > h + 100) {
-                        // Recycle particle if it falls off bottom (teleport to the top)
+                        // Recycle particle when it falls off screen (like a continuous fountain)
                         this.y = -this.radius - Math.random() * 50;
                         this.vy = 0;
                         this.x = Math.random() * w;
@@ -429,7 +462,7 @@
                 draw(ctx) {
                     ctx.beginPath();
                     // Low opacity red for the glowing/metaball look
-                    ctx.fillStyle = `rgba(223, 37, 49, 0.15)`; 
+                    ctx.fillStyle = ACCENT_COLOR.replace('#', 'rgba(') + ', 0.12)'; // Slightly less opacity for a thinner water look
                     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                     ctx.fill();
                 }
@@ -438,6 +471,11 @@
             // Initialization
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('mouseout', handleMouseOut);
+            canvas.addEventListener('touchmove', handleMouseMove);
+            canvas.addEventListener('touchend', handleMouseOut);
+
 
             let particles = [];
             for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -451,7 +489,7 @@
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                 // Add a soft blur filter for the "liquid" or "metaball" effect
-                ctx.filter = 'blur(15px)';
+                ctx.filter = 'blur(18px)'; // Increased blur for smoother connection
 
                 // Update and draw all particles
                 particles.forEach(p => {
@@ -459,19 +497,12 @@
                     p.draw(ctx);
                 });
                 
-                // Reset filter for rest of the page (though no other canvas elements exist)
                 ctx.filter = 'none';
 
                 animationFrameId = requestAnimationFrame(animate);
             };
 
             animate();
-
-            // Cleanup (though this is a single page app)
-            // window.onbeforeunload = () => {
-            //     window.removeEventListener('resize', resizeCanvas);
-            //     cancelAnimationFrame(animationFrameId);
-            // };
         };
     </script>
 </body>
