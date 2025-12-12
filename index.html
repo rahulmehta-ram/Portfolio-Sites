@@ -3,243 +3,495 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio</title>
+    <title>Rahul Mehta | Creative Developer & Designer</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Icons (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts: Open Sans (from image) & Space Grotesk (for headers, similar to Mokoto vibe) -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#df2531', // The red from your image
+                            dark: '#a61b24',
+                            glow: 'rgba(223, 37, 49, 0.5)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'], // Updated font
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                        'slide-up': 'slideUp 0.6s ease-out forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 8s linear infinite', /* Added slow spin for profile */
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* Slate 900 */
-            color: #f8fafc; /* Slate 50 */
+            background-color: #000000; /* Pitch Black */
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- Bubble Background (Updated to Red) --- */
+        .bubble-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            /* Red Gradient based on #df2531 with transparency */
+            background: radial-gradient(circle at 30% 30%, rgba(223, 37, 49, 0.25), rgba(223, 37, 49, 0.05));
+            border: 1px solid rgba(223, 37, 49, 0.2); 
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(223, 37, 49, 0.15), inset 0 0 20px rgba(223, 37, 49, 0.1);
+            backdrop-filter: blur(1px);
+            opacity: 0.6;
+            animation: rise var(--duration) linear infinite;
+            bottom: -100px;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; } 
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-120vh) translateX(var(--drift)); opacity: 0; }
+        }
+
+        /* --- Glassmorphism (Darker, Obsidian Style) --- */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.3s ease;
         }
         
-        /* Custom scrollbar for webkit */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .glass-panel:hover {
+            border-color: rgba(223, 37, 49, 0.4); /* Red border on hover */
         }
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569; 
-        }
-
-        /* Hover animations */
-        .hover-lift {
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
-        }
-        .hover-lift:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Glassmorphism card effect */
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
+        
+        /* Interactive Skill Card */
+        .skill-card {
+            background: rgba(20, 20, 20, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .skill-card:hover {
+            transform: translateY(-5px);
+            background: rgba(30, 0, 0, 0.8); /* Subtle red tint */
+            border-color: #df2531; 
+            box-shadow: 0 10px 20px -5px rgba(223, 37, 49, 0.2);
+        }
+
+        /* Custom Scrollbar (Red Accent) */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #df2531; }
+
+        /* Modal Transitions */
+        .modal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-10 px-4 selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen selection:bg-brand selection:text-white">
 
-    <!-- Main Container (Phone width optimized, but expands on desktop) -->
-    <main class="w-full max-w-md md:max-w-2xl animate-fade-in-up">
-        
-        <!-- Profile Section -->
-        <div class="flex flex-col items-center text-center mb-8">
-            <div class="relative group">
-                <!-- Profile Image Placeholder -->
-                <div class="w-28 h-28 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 p-1 mb-4 shadow-lg shadow-indigo-500/20">
+    <!-- Interactive Bubble Background -->
+    <div class="bubble-container" id="bubbleContainer">
+        <!-- Bubbles injected by JS -->
+    </div>
+
+    <main class="w-full max-w-3xl mx-auto px-4 py-12 flex flex-col items-center relative z-10">
+
+        <!-- HEADER / PROFILE -->
+        <div class="glass-panel p-8 rounded-3xl w-full text-center mb-10 animate-fade-in relative overflow-hidden group">
+            <!-- Decorative red gradient line at top -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-black via-brand to-black"></div>
+
+            <div class="relative inline-block mb-4 group/profile">
+                <!-- Motion Profile: Spinning Outer Ring -->
+                <div class="absolute -inset-1 bg-gradient-to-tr from-brand to-transparent rounded-full blur opacity-75 animate-spin-slow"></div>
+                
+                <!-- Profile Image Container (Static) -->
+                <div class="relative w-32 h-32 rounded-full p-1 bg-black ring-1 ring-white/10 z-10">
                     <img 
-                        src="https://avatars.githubusercontent.com/u/236363215?v=4"
-                        alt="Profile Picture" 
-                        class="w-full h-full rounded-full bg-slate-800 object-cover border-4 border-slate-900"
-                        onerror="this.src='https://via.placeholder.com/150?text=User'"
+                        src="https://avatars.githubusercontent.com/u/236363215?v=4" 
+                        alt="Rahul Mehta" 
+                        class="w-full h-full rounded-full object-cover border-2 border-black bg-black"
+                        onerror="this.src='https://ui-avatars.com/api/?name=Rahul+Mehta&background=random'"
                     >
                 </div>
-                <div class="absolute bottom-4 right-0 bg-green-500 w-4 h-4 rounded-full border-4 border-slate-900" title="Available for work"></div>
+
+                <!-- Status Indicator -->
+                <div class="absolute bottom-2 right-2 bg-brand w-5 h-5 rounded-full border-4 border-black animate-pulse-slow z-20"></div>
             </div>
-            
-            <h1 class="text-2xl font-bold tracking-tight">Rahul Mehta</h1>
-            <p class="text-slate-400 mt-1 max-w-xs">Building digital products & efficient code. Passionate about UI/UX and Open Source.</p>
-            
-            <!-- Tags -->
-            <div class="flex flex-wrap justify-center gap-2 mt-4">
-                <span class="px-3 py-1 text-xs font-medium rounded-full bg-slate-800 text-indigo-400 border border-slate-700">Developer</span>
-                <span class="px-3 py-1 text-xs font-medium rounded-full bg-slate-800 text-purple-400 border border-slate-700">Designer</span>
-                <span class="px-3 py-1 text-xs font-medium rounded-full bg-slate-800 text-emerald-400 border border-slate-700">Freelancer</span>
+
+            <h1 class="text-3xl md:text-4xl font-bold font-display tracking-tight mb-2 text-white">Rahul Mehta</h1>
+            <p class="text-gray-400 font-medium mb-4 flex items-center justify-center gap-2">
+                <i data-lucide="code-2" class="w-4 h-4 text-brand"></i> Creative Developer 
+                <span class="text-gray-700">|</span> 
+                <i data-lucide="clapperboard" class="w-4 h-4 text-brand"></i> Visual Editor
+            </p>
+            <p class="text-gray-500 max-w-lg mx-auto leading-relaxed">
+                Merging code with creativity. I build seamless web experiences and design compelling visual stories.
+            </p>
+
+            <!-- Social Row -->
+            <div class="flex justify-center gap-3 mt-6 flex-wrap">
+                <a href="https://github.com/rahulmehta-ram" target="_blank" class="p-3 bg-white/5 hover:bg-brand rounded-xl transition-all hover:scale-110 hover:text-white border border-white/5 group/icon">
+                    <i data-lucide="github" class="w-5 h-5 text-gray-400 group-hover/icon:text-white"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/rahul-mehta-6619a2384/" target="_blank" class="p-3 bg-white/5 hover:bg-brand rounded-xl transition-all hover:scale-110 hover:text-white border border-white/5 group/icon">
+                    <i data-lucide="linkedin" class="w-5 h-5 text-gray-400 group-hover/icon:text-white"></i>
+                </a>
+                
+                <!-- X (formerly Twitter) -->
+                <a href="https://x.com/" target="_blank" class="p-3 bg-white/5 hover:bg-brand rounded-xl transition-all hover:scale-110 hover:text-white border border-white/5 group/icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-gray-400 group-hover/icon:text-white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                </a>
+
+                <!-- Telegram -->
+                <a href="https://t.me/rm_fx07" target="_blank" class="p-3 bg-white/5 hover:bg-brand rounded-xl transition-all hover:scale-110 hover:text-white border border-white/5 group/icon">
+                    <i data-lucide="send" class="w-5 h-5 text-gray-400 group-hover/icon:text-white translate-x-0.5"></i>
+                </a>
+
+                <button onclick="copyEmail()" class="p-3 bg-white/5 hover:bg-brand rounded-xl transition-all hover:scale-110 hover:text-white border border-white/5 group/icon relative">
+                    <i data-lucide="mail" class="w-5 h-5 text-gray-400 group-hover/icon:text-white"></i>
+                    <span id="copyTooltip" class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-xs px-2 py-1 rounded opacity-0 transition-opacity whitespace-nowrap pointer-events-none border border-gray-700">Copy Email</span>
+                </button>
             </div>
         </div>
 
-        <!-- Social Links (Row) -->
-        <div class="flex justify-center gap-4 mb-10">
-            <!-- GitHub -->
-            <a href="https://github.com/rahulmehta-ram" target="_blank" class="p-3 rounded-full bg-slate-800 text-white hover:bg-slate-700 hover:text-white transition-colors border border-slate-700 hover-lift" aria-label="GitHub">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
-            </a>
-            <!-- Twitter / X -->
-            <a href="#" target="_blank" class="p-3 rounded-full bg-slate-800 text-white hover:bg-slate-700 hover:text-white transition-colors border border-slate-700 hover-lift" aria-label="Twitter">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
-            </a>
-            <!-- LinkedIn -->
-            <a href="https://www.linkedin.com/in/rahul-mehta-6619a2384/" target="_blank" class="p-3 rounded-full bg-slate-800 text-white hover:bg-blue-600 hover:text-white transition-colors border border-slate-700 hover-lift" aria-label="LinkedIn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
-            </a>
-            <!--_____________________________________________________________________________________________________________________________-  --><!--_____________________________________________________________________________________________________________________________-  -->
-            <!-- Email (Copy Action) -->
+        <!-- SKILLS SECTION -->
+        <div class="w-full space-y-8 animate-slide-up" style="animation-delay: 0.1s;">
             
-            <!-- <button id="copyEmailBtn" class="p-3 rounded-full bg-slate-800 text-white hover:bg-emerald-600 hover:text-white transition-colors border border-slate-700 hover-lift relative" aria-label="Copy email "> -->
-            <button id="copyEmailBtn" class="p-3 rounded-full bg-slate-800 text-white hover:bg-emerald-600 hover:text-white transition-colors border border-slate-700 hover-lift relative" aria-label="Copy Email">
+            <!-- Category 1: Creative & Editing -->
+            <div>
+                <h2 class="text-xl font-bold font-display mb-4 flex items-center gap-2 px-1 text-white">
+                    <i data-lucide="palette" class="w-5 h-5 text-brand"></i> Creative Editing Suite
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    
+                    <!-- Photoshop -->
+                    <a href="#" class="skill-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 group text-center no-underline">
+                        <img src="https://www.freepik.com/icon/adobe-photoshop_5210956#fromView=search&page=1&position=8&uuid=b25584fb-065c-4105-af43-a4daa55098fc" alt="Photoshop" class="w-10 h-10 group-hover:scale-110 transition-transform filter grayscale group-hover:grayscale-0">
+                        <span class="text-xs font-medium text-gray-400 group-hover:text-white">Photoshop</span>
+                    </a>
+
+                    <!-- Canva -->
+                    <a href="#" class="skill-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 group text-center no-underline">
+                        <img src="https://cdn.simpleicons.org/canva/df2531" alt="Canva" class="w-10 h-10 group-hover:scale-110 transition-transform filter grayscale group-hover:grayscale-0">
+                        <span class="text-xs font-medium text-gray-400 group-hover:text-white">Canva</span>
+                    </a>
+
+                    <!-- DaVinci Resolve -->
+                    <a href="#" class="skill-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 group text-center no-underline">
+                        <img src="https://cdn.simpleicons.org/davinciresolve/df2531" alt="DaVinci" class="w-10 h-10 group-hover:scale-110 transition-transform filter grayscale group-hover:grayscale-0">
+                        <span class="text-xs font-medium text-gray-400 group-hover:text-white">DaVinci Resolve</span>
+                    </a>
+
+                    <!-- Premiere Pro -->
+                    <a href="#" class="skill-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 group text-center no-underline">
+                        <img src="https://www.freepik.com/icon/premiere-pro_9814226#fromView=keyword&page=1&position=10&uuid=c5a0e9a2-d223-4099-a341-f1aeb638c57e" alt="Premiere" class="w-10 h-10 group-hover:scale-110 transition-transform filter grayscale group-hover:grayscale-0">
+                        <span class="text-xs font-medium text-gray-400 group-hover:text-white">Premiere Pro</span>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- Category 2: Web Development -->
+            <div>
+                <h2 class="text-xl font-bold font-display mb-4 flex items-center gap-2 px-1 text-white">
+                    <i data-lucide="code" class="w-5 h-5 text-brand"></i> Web Development
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    
+                    <!-- HTML5 -->
+                    <a href="#" class="skill-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 group text-center no-underline">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" class="w-10 h-10 group-hover:scale-110 transition-transform filter grayscale group-hover:grayscale-0">
+                        <span class="text-xs font-medium text-gray-400 group-hover:text-white">HTML5</span>
+                    </a>
+
+                    <!-- CSS3 -->
+                    <a href="#" class="skill-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 group text-center no-underline">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" class="w-10 h-10 group-hover:scale-110 transition-transform filter grayscale group-hover:grayscale-0">
+                        <span class="text-xs font-medium text-gray-400 group-hover:text-white">CSS3</span>
+                    </a>
+
+                    <!-- JavaScript -->
+                    <a href="#" class="skill-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 group text-center no-underline">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JS" class="w-10 h-10 group-hover:scale-110 transition-transform filter grayscale group-hover:grayscale-0">
+                        <span class="text-xs font-medium text-gray-400 group-hover:text-white">JavaScript</span>
+                    </a>
+
+                    <!-- Tailwind -->
+                    <a href="#" class="skill-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 group text-center no-underline">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind" class="w-10 h-10 group-hover:scale-110 transition-transform filter grayscale group-hover:grayscale-0">
+                        <span class="text-xs font-medium text-gray-400 group-hover:text-white">Tailwind CSS</span>
+                    </a>
+
+                    <!-- Node.js -->
+                    <a href="#" class="skill-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 group text-center no-underline">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node" class="w-10 h-10 group-hover:scale-110 transition-transform filter grayscale group-hover:grayscale-0">
+                        <span class="text-xs font-medium text-gray-400 group-hover:text-white">Node.js</span>
+                    </a>
+
+                    <!-- React -->
+                    <a href="#" class="skill-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 group text-center no-underline">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" class="w-10 h-10 group-hover:scale-110 transition-transform filter grayscale group-hover:grayscale-0">
+                        <span class="text-xs font-medium text-gray-400 group-hover:text-white">React</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- PROJECTS SECTION -->
+        <h2 class="text-2xl font-bold font-display mt-12 mb-6 self-start flex items-center gap-2 px-1 text-white">
+            <i data-lucide="layers" class="text-brand"></i> Featured Work
+        </h2>
+
+        <div class="grid grid-cols-1 gap-4 w-full mb-10">
             
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                <!-- Tooltip -->
-                <span id="copyTooltip" class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-xs px-2 py-1 rounded opacity-0 transition-opacity whitespace-nowrap pointer-events-none">Copy Email</span>
+            <button onclick="openModal('modal-portfolio')" class="glass-panel p-4 rounded-xl flex items-center gap-5 hover:bg-white/5 transition-all text-left group w-full border-l-4 border-l-transparent hover:border-l-brand hover:translate-x-1">
+                <div class="w-14 h-14 rounded-lg bg-white/5 flex items-center justify-center text-brand shrink-0 group-hover:scale-110 transition-transform">
+                    <i data-lucide="layout" class="w-7 h-7"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-lg text-white group-hover:text-brand transition-colors">Portfolio Projects</h3>
+                    <p class="text-sm text-gray-500"> Responsive Design x projects</p>
+                </div>
+                <i data-lucide="chevron-right" class="text-gray-600 group-hover:text-white transition-colors"></i>
+            </button>
+
+            <button onclick="openModal('modal-game')" class="glass-panel p-4 rounded-xl flex items-center gap-5 hover:bg-white/5 transition-all text-left group w-full border-l-4 border-l-transparent hover:border-l-brand hover:translate-x-1">
+                <div class="w-14 h-14 rounded-lg bg-white/5 flex items-center justify-center text-brand shrink-0 group-hover:scale-110 transition-transform">
+                    <i data-lucide="gamepad-2" class="w-7 h-7"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-lg text-white group-hover:text-brand transition-colors">Game Concept</h3>
+                    <!-- <p class="text-sm text-gray-500">Interactive Logic • Design Assets</p> -->
+                       <p class="text-sm text-gray-500">working publish soon...</p>
+                </div>
+                <i data-lucide="chevron-right" class="text-gray-600 group-hover:text-white transition-colors"></i>
+            </button>
+
+            <button onclick="openModal('modal-status')" class="glass-panel p-4 rounded-xl flex items-center gap-5 hover:bg-white/5 transition-all text-left group w-full border-l-4 border-l-transparent hover:border-l-brand hover:translate-x-1">
+                <div class="w-14 h-14 rounded-lg bg-white/5 flex items-center justify-center text-brand shrink-0 group-hover:scale-110 transition-transform">
+                    <i data-lucide="bar-chart-2" class="w-7 h-7"></i>
+                </div>
+                <div class="flex-1">
+                    <!-- <h3 class="font-bold text-lg text-white group-hover:text-brand transition-colors">Status Tracker</h3> -->
+                     <h3 class="font-bold text-lg text-white group-hover:text-brand transition-colors">Resoures</h3>
+                    
+                    <!-- <p class="text-sm text-gray-500">Utility Tool • UI Design</p> -->
+                     <p class="text-sm text-gray-500">working publish soon...</p>
+                </div>
+                <i data-lucide="chevron-right" class="text-gray-600 group-hover:text-white transition-colors"></i>
             </button>
         </div>
-<!--_____________________________________________________________________________________________________________________________-  -->
 
-
-
-        <!--_____________________________________________________________________________________________________________________________-  -->
-        <!-- Section Title -->
-        <h2 class="text-xl font-bold mb-4 px-1 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-            Featured Projects
-        </h2>
-
-        <!-- Projects Grid -->
-        <div class="grid grid-cols-1 gap-4 mb-10">
-            
-            <!-- Project Card 1 -->
-            <a href="protfolio.html" class="glass-card p-4 rounded-xl flex items-center gap-4 hover-lift group no-underline">
-                <div class="w-16 h-16 rounded-lg bg-indigo-900/50 flex items-center justify-center text-indigo-400 shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="font-bold text-lg text-slate-100 group-hover:text-indigo-300 transition-colors">Portfolio Site</h3>
-                    <p class="text-sm text-slate-400 truncate">Basic project</p>
-                </div>
-                <div class="text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </div>
+        <!-- CTA Links -->
+        <div class="grid grid-cols-2 gap-4 w-full">
+            <a href="https://drive.google.com/file/d/1yRTLikRyTN9Z7zc3qSvvtb_nhvUyicxS/view?usp=sharing" target="_blank" class="flex items-center justify-center gap-2 p-4 rounded-xl bg-white/5 hover:bg-brand hover:text-white border border-white/5 hover:border-brand transition-all hover:-translate-y-1 font-medium text-gray-300">
+                <i data-lucide="file-text" class="w-4 h-4"></i> Resume
             </a>
-
-            <!-- Project Card 2 -->
-             <a href="ask_stuts.html" class="glass-card p-4 rounded-xl flex items-center gap-4 hover-lift group no-underline">
-            <!-- <a href="#" class="glass-card p-4 rounded-xl flex items-center gap-4 hover-lift group no-underline"> -->
-                <div class="w-16 h-16 rounded-lg bg-emerald-900/50 flex items-center justify-center text-emerald-400 shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                    
-                    <!-- <h3 class="font-bold text-lg text-slate-100 group-hover:text-emerald-300 transition-colors">Dashboard App</h3> -->
-                     <h3 class="font-bold text-lg text-slate-100 group-hover:text-emerald-300 transition-colors">Resource</h3>
-                    <!-- <p class="text-sm text-slate-400 truncate">React, Analytics, Data Viz</p> -->
-                    <p class="text-sm text-slate-400 truncate">Working...</p>
-                </div>
-                <div class="text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </div>
-            </a>
-
-            <!-- Project Card 3 -->
-            <!-- <a href="#" class="glass-card p-4 rounded-xl flex items-center gap-4 hover-lift group no-underline"> -->
-                 <a href="nodegame.html" class="glass-card p-4 rounded-xl flex items-center gap-4 hover-lift group no-underline">
-                <div class="w-16 h-16 rounded-lg bg-pink-900/50 flex items-center justify-center text-pink-400 shrink-0 group-hover:bg-pink-600 group-hover:text-white transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="font-bold text-lg text-slate-100 group-hover:text-pink-300 transition-colors">Game Concept</h3>
-                    <!-- <p class="text-sm text-slate-400 truncate">Unity, C#, 3D Modeling</p> -->
-                    <p class="text-sm text-slate-400 truncate">Working...</p>
-                </div>
-                <div class="text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </div>
-            </a>
-
-        </div>
-
-        <!-- Links Section -->
-        <h2 class="text-xl font-bold mb-4 px-1 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            Quick Links
-        </h2>
-        <div class="flex flex-col gap-3">
-            <a href="ask_stuts.html" class="block w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-center py-3 rounded-xl font-medium transition-colors">
-                Ask Project Status
-            </a>
-            <!--  Download Resume -->
-            <a href="https://drive.google.com/file/d/1yRTLikRyTN9Z7zc3qSvvtb_nhvUyicxS/view?usp=sharing" class="block w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-center py-3 rounded-xl font-medium transition-colors">
-                Download Resume
+            <a href="mailto:ramiiii47800@gmail.com" class="flex items-center justify-center gap-2 p-4 rounded-xl bg-brand hover:bg-red-700 text-white shadow-lg shadow-brand/20 transition-all hover:-translate-y-1 font-bold">
+                <i data-lucide="send" class="w-4 h-4"></i> Hire Me
             </a>
         </div>
 
-        <!-- Footer -->
-        <footer class="mt-12 text-center text-sm text-slate-500 pb-4">
-            <p>&copy; 2025 Rahul Mehta. All rights reserved.</p>
-            <p class="text-xs mt-1">Built with love </p>
+        <footer class="mt-16 text-gray-600 text-sm flex flex-col items-center">
+            <p>© 2025 Rahul Mehta</p>
+            <p class="text-xs mt-1 opacity-60">Designed & Developed with Passion</p>
         </footer>
 
     </main>
-    
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-white text-slate-900 px-6 py-3 rounded-full shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 font-medium z-50 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-600"><polyline points="20 6 9 17 4 12"/></svg>
-        Email copied to clipboard!
+
+    <!-- ================= MODALS (Updated to Black/Red theme) ================= -->
+    <div id="modal-backdrop" onclick="closeAllModals()" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
+
+    <!-- Modal Template -->
+    <div id="modal-portfolio" class="modal fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-lg bg-black border border-gray-800 p-6 rounded-2xl z-50 shadow-2xl shadow-brand/10">
+        <div class="flex justify-between items-start mb-4">
+            <h3 class="text-xl font-bold text-brand">Portfolio Site</h3>
+            <button onclick="closeAllModals()" class="text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+        </div>
+        <p class="text-gray-300 mb-4">A showcase of my skills in web development and design. Built with HTML, Tailwind CSS, and optimized for performance.</p>
+        <button onclick="closeAllModals()" class="w-full py-2 bg-white/10 rounded-lg hover:bg-brand hover:text-white transition-colors text-gray-300">Close Details</button>
+    </div>
+
+    <div id="modal-game" class="modal fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-lg bg-black border border-gray-800 p-6 rounded-2xl z-50 shadow-2xl shadow-brand/10">
+        <div class="flex justify-between items-start mb-4">
+            <h3 class="text-xl font-bold text-brand">Game Concept</h3>
+            <button onclick="closeAllModals()" class="text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+        </div>
+        <div class="w-full h-32 bg-gray-900 rounded-lg mb-4 flex items-center justify-center border border-dashed border-gray-700">
+            <span class="text-gray-500 text-sm">Game Screenshot</span>
+        </div>
+        <p class="text-gray-300 mb-4">A conceptual logic game. I designed the character sprites in Photoshop and implemented the game loop using JavaScript.</p>
+        <button onclick="closeAllModals()" class="w-full py-2 bg-white/10 rounded-lg hover:bg-brand hover:text-white transition-colors text-gray-300">Close Details</button>
+    </div>
+
+    <div id="modal-status" class="modal fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-lg bg-black border border-gray-800 p-6 rounded-2xl z-50 shadow-2xl shadow-brand/10">
+        <div class="flex justify-between items-start mb-4">
+            <h3 class="text-xl font-bold text-brand">Project Status Tracker</h3>
+            <button onclick="closeAllModals()" class="text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+        </div>
+        <p class="text-gray-300 mb-4">A resource management tool designed to track freelance project statuses. Focused on clean UI/UX for better readability.</p>
+        <button onclick="closeAllModals()" class="w-full py-2 bg-white/10 rounded-lg hover:bg-brand hover:text-white transition-colors text-gray-300">Close Details</button>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-3 rounded-full shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 font-bold z-50 flex items-center gap-2 pointer-events-none border border-gray-200">
+        <i data-lucide="check-circle" class="w-5 h-5 text-brand"></i>
+        Email copied!
     </div>
 
     <script>
-        // Configuration
-        const email = "contact@example.com"; 
+        // Initialize Icons
+        lucide.createIcons();
 
-        // Elements
-        const copyBtn = document.getElementById('copyEmailBtn');
-        const toast = document.getElementById('toast');
-        const tooltip = document.getElementById('copyTooltip');
+        /* --- Bubble Animation Logic --- */
+        const bubbleContainer = document.getElementById('bubbleContainer');
+        const bubbleCount = 15; // Number of bubbles
 
-        // Copy Function
-        copyBtn.addEventListener('click', () => {
-            // Copy to clipboard
-            const textarea = document.createElement('textarea');
-            textarea.value = email;
-            document.body.appendChild(textarea);
-            textarea.select();    
-            
-            try {
-                document.execCommand('copy');
-                showToast();
-            } catch (err) {
-                console.error('Failed to copy', err);
-                alert("Email: " + email); // Fallback
-            }
-            
-            document.body.removeChild(textarea);
-        });
-
-        function showToast() {
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+        // Create Bubbles
+        for (let i = 0; i < bubbleCount; i++) {
+            const bubble = document.createElement('div');
+            bubble.classList.add('bubble');
+            const size = Math.random() * 60 + 20 + 'px'; // Random size 20-80px
+            bubble.style.width = size;
+            bubble.style.height = size;
+            bubble.style.left = Math.random() * 100 + '%';
+            // Randomize duration and drift
+            bubble.style.setProperty('--duration', (Math.random() * 10 + 10) + 's');
+            bubble.style.setProperty('--drift', (Math.random() * 100 - 50) + 'px');
+            // Random delay so they don't all start at once
+            bubble.style.animationDelay = (Math.random() * 5) + 's';
+            bubbleContainer.appendChild(bubble);
         }
 
-        // Simple Tooltip logic
-        copyBtn.addEventListener('mouseenter', () => {
-            tooltip.classList.remove('opacity-0');
+        /* --- Parallax on Mouse/Device --- */
+        let targetX = 0, targetY = 0;
+        let currentX = 0, currentY = 0;
+
+        // Desktop: Mouse movement
+        document.addEventListener('mousemove', (e) => {
+            targetX = (e.clientX - window.innerWidth / 2) * 0.05;
+            targetY = (e.clientY - window.innerHeight / 2) * 0.05;
         });
-        copyBtn.addEventListener('mouseleave', () => {
-            tooltip.classList.add('opacity-0');
-        });
+
+        // Mobile: Device Orientation
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', (e) => {
+                // gamma is left/right tilt [-90,90], beta is front/back tilt [-180,180]
+                const x = e.gamma || 0; 
+                const y = e.beta || 0;
+                // Limit range and invert for natural feel
+                targetX = Math.min(Math.max(x, -45), 45) * 1.5; 
+                targetY = Math.min(Math.max(y, -45), 45) * 1.5;
+            });
+        }
+
+        // Smooth animation loop
+        function animateBackground() {
+            currentX += (targetX - currentX) * 0.1;
+            currentY += (targetY - currentY) * 0.1;
+            
+            // Apply parallax to container
+            bubbleContainer.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            requestAnimationFrame(animateBackground);
+        }
+        animateBackground();
+
+
+        /* --- UI Logic --- */
+        const backdrop = document.getElementById('modal-backdrop');
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            backdrop.classList.remove('hidden');
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                modal.classList.add('active');
+            }, 10);
+        }
+
+        function closeAllModals() {
+            const modals = document.querySelectorAll('.modal');
+            backdrop.classList.add('opacity-0');
+            modals.forEach(m => m.classList.remove('active'));
+            setTimeout(() => {
+                backdrop.classList.add('hidden');
+            }, 300);
+        }
+
+        function copyEmail() {
+            const email = "ramiiii47800@gmail.com";
+            navigator.clipboard.writeText(email).then(() => {
+                showToast();
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = email;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
     </script>
 </body>
 </html>
