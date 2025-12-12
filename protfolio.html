@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Sites</title>
+    <title>Deep Red Portfolio</title>
     <style>
-        /* Modern Reset & Variables */
+        /* --- CSS VARIABLES (Deep Red Palette) --- */
         :root {
             --bg-color: #000000;
-            /* Complex gradient for animation - Deep Blacks */
-            --bg-gradient: linear-gradient(-45deg, #000000, #111111, #000000, #0a0a0a);
-            --card-bg: rgba(20, 20, 20, 0.6); 
+            --card-bg: rgba(10, 10, 10, 0.7); /* Dark transparent background */
             --card-border: rgba(255, 255, 255, 0.1);
             --text-primary: #ffffff;
             --text-secondary: #a3a3a3;
-            --accent-primary: #38bdf8;
-            --accent-secondary: #818cf8;
+            --accent-primary: #df2531; /* Deep Red from palette */
+            --accent-secondary: #991e27; /* Darker Red */
             --border-radius: 16px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.15);
+            --shadow-glow: 0 0 25px rgba(223, 37, 49, 0.5); /* Red glow */
             --font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
+        /* --- Global Reset & Base Styles --- */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -31,10 +30,7 @@
 
         body {
             font-family: var(--font-family);
-            background: var(--bg-color);
-            background-image: var(--bg-gradient);
-            background-size: 400% 400%; /* Make background larger than screen */
-            animation: gradientBG 15s ease infinite; /* Animate the position */
+            background-color: var(--bg-color);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
@@ -46,33 +42,30 @@
             overflow-x: hidden;
         }
 
-        /* Ambient Background Glow */
-        body::before {
-            content: '';
-            position: absolute;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 400px;
-            background: linear-gradient(180deg, rgba(56, 189, 248, 0.15), rgba(129, 140, 248, 0));
-            filter: blur(80px);
+        /* Canvas for Liquid Background */
+        #liquid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -1;
-            pointer-events: none;
-            animation: floatGlow 20s ease-in-out infinite alternate; /* Floating animation for the glow */
+            /* Disable touch interaction on the canvas to prevent scrolling conflicts */
+            touch-action: none;
         }
 
-        /* Container */
+        /* --- Container & Layout --- */
         .container {
             width: 100%;
             max-width: 580px;
+            position: relative;
+            z-index: 10; /* Ensure content is above the canvas */
         }
 
-        /* Header Styling */
+        /* --- Header Styling --- */
         header {
             margin-bottom: 4rem;
             text-align: left;
-            /* Removed perspective for flat design */
         }
 
         h1 {
@@ -81,15 +74,13 @@
             letter-spacing: -0.03em;
             margin-bottom: 0.5rem;
             
-            /* Return to flat gradient text */
-            background: linear-gradient(to right, #ffffff, #94a3b8);
+            /* Flat gradient text using the new palette */
+            background: linear-gradient(to right, #ffffff, var(--accent-primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             color: #ffffff; /* Fallback */
         }
-
-        /* Removed interactive 3D movement on hover */
 
         .subtitle {
             color: var(--text-secondary);
@@ -99,20 +90,18 @@
             margin-top: 0.5rem;
         }
 
-        /* Project List */
+        /* --- Project List --- */
         .project-list {
             display: flex;
             flex-direction: column;
             gap: 2.5rem;
         }
 
-        /* Individual Project Item Wrapper */
+        /* Individual Project Item Wrapper (for stagger animation) */
         .project-item {
             opacity: 0;
             animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
-
-        /* Stagger animations */
         .project-item:nth-child(1) { animation-delay: 0.1s; }
         .project-item:nth-child(2) { animation-delay: 0.2s; }
         .project-item:nth-child(3) { animation-delay: 0.3s; }
@@ -148,7 +137,7 @@
             align-items: center;
             justify-content: space-between;
             
-            /* Glassmorphism */
+            /* Glassmorphism using new variables */
             background-color: var(--card-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -172,7 +161,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(45deg, rgba(56, 189, 248, 0.1), rgba(129, 140, 248, 0.1));
+            /* Using a combination of primary and secondary accents */
+            background: linear-gradient(45deg, var(--accent-primary)33, var(--accent-secondary)00); 
             opacity: 0;
             transition: var(--transition);
             z-index: 0;
@@ -208,19 +198,15 @@
             transition: var(--transition);
         }
 
-        /* Hover Effects */
+        /* --- Hover Effects --- */
         .project-card:hover {
             transform: translateY(-4px) scale(1.01);
-            border-color: rgba(56, 189, 248, 0.3);
+            border-color: rgba(223, 37, 49, 0.4);
             box-shadow: var(--shadow-glow);
         }
 
         .project-card:hover::before {
             opacity: 1;
-        }
-
-        .project-card:hover .project-name {
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
 
         .project-card:hover .arrow-wrapper {
@@ -229,10 +215,17 @@
         }
 
         .project-card:hover .arrow-icon {
-            stroke: #0f172a; /* Dark stroke on light bg */
+            stroke: var(--bg-color); /* Black stroke on red background */
         }
 
-        /* Animation */
+        /* Touch Device Optimization (Active State) */
+        .project-card:active {
+            transform: scale(0.98);
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-primary);
+        }
+
+        /* --- Animations --- */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -244,88 +237,24 @@
             }
         }
 
-        /* Background Gradient Animation */
-        @keyframes gradientBG {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        /* Floating Glow Animation */
-        @keyframes floatGlow {
-            0% {
-                transform: translateX(-50%) translateY(0) scale(1);
-                opacity: 0.5;
-            }
-            50% {
-                transform: translateX(-40%) translateY(-20px) scale(1.1);
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateX(-60%) translateY(20px) scale(0.9);
-                opacity: 0.5;
-            }
-        }
-
-        /* Touch Device Optimization (Active State) */
-        /* Gives immediate feedback when tapping on mobile */
-        .project-card:active {
-            transform: scale(0.98);
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: var(--accent-primary);
-        }
-
-        /* Mobile Responsiveness */
+        /* --- Mobile Responsiveness --- */
         @media (max-width: 600px) {
             body { 
                 padding: 3rem 1rem;
-                overflow-x: hidden; 
             }
-
-            .container {
-                width: 100%;
-            }
-
-            /* Adjust Title for small screens */
-            h1 { 
-                font-size: 2.5rem; 
-                line-height: 1.2;
-                margin-bottom: 0.5rem;
-            }
-            
-            header {
-                margin-bottom: 2.5rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .project-list {
-                gap: 1.5rem;
-            }
-
+            h1 { font-size: 2.5rem; line-height: 1.2; }
+            header { margin-bottom: 2.5rem; }
+            .subtitle { font-size: 1rem; }
+            .project-list { gap: 1.5rem; }
             .project-card { 
                 padding: 1.25rem 1rem; 
-                min-height: 72px; /* Ensure large touch target */
+                min-height: 72px; 
             }
-
-            .project-name { 
-                font-size: 1.1rem; 
-            }
-            
-            .project-label {
-                font-size: 0.7rem;
-            }
+            .project-name { font-size: 1.1rem; }
+            .project-label { font-size: 0.7rem; }
         }
         
-        /* Footer Styling */
+        /* --- Footer Styling --- */
         .footer {
             margin-top: 4rem;
             text-align: center;
@@ -339,10 +268,13 @@
     </style>
 </head>
 <body>
+    
+    <!-- Canvas for the Liquid Background -->
+    <canvas id="liquid-bg"></canvas>
 
     <div class="container">
         <header>
-            <h1>Portfolio Sites</h1>
+            <h1>Portfolio Projects</h1>
             <p class="subtitle">Selected works & digital experiments</p>
         </header>
 
@@ -352,7 +284,7 @@
             <div class="project-item">
                 <span class="project-label">#project 01</span>
                 <a href="The Cursor-Following Dragon.html" class="project-card">
-                    <span class="project-name">The Cursor Following Dragon/span>
+                    <span class="project-name">The Cursor Following Dragon</span>
                     <div class="arrow-wrapper">
                         <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -366,7 +298,7 @@
             <div class="project-item">
                 <span class="project-label">#project 02</span>
                 <a href="nodegame.html" class="project-card">
-                    <span class="project-name">Node Game</span>
+                    <span class="project-name">Node Game Simulation</span>
                     <div class="arrow-wrapper">
                         <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -380,7 +312,7 @@
             <div class="project-item">
                 <span class="project-label">#project 03</span>
                 <a href="#" class="project-card">
-                    <span class="project-name">Working...</span>
+                    <span class="project-name">soon...</span>
                     <div class="arrow-wrapper">
                         <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -394,7 +326,21 @@
             <div class="project-item">
                 <span class="project-label">#project 04</span>
                 <a href="#" class="project-card">
-                    <span class="project-name">Working...</span>
+                    <span class="project-name">soon...</span>
+                    <div class="arrow-wrapper">
+                        <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+             <!-- Item 05 -->
+            <div class="project-item">
+                <span class="project-label">#project 05</span>
+                <a href="#" class="project-card">
+                    <span class="project-name">soon...</span>
                     <div class="arrow-wrapper">
                         <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -411,5 +357,122 @@
         </div>
     </div>
 
+    <!-- --- JavaScript for Liquid Background Simulation --- -->
+    <script>
+        window.onload = function() {
+            const canvas = document.getElementById('liquid-bg');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            
+            // Simulation Constants
+            const PARTICLE_COUNT = 30;
+            const GRAVITY = 0.04;
+            const DRAG = 0.985;
+            const MAX_SPEED = 2;
+            const ACCENT_COLOR = '#df2531';
+            const BACKGROUND_COLOR = '#000000';
+
+            let animationFrameId;
+
+            // Function to set canvas dimensions
+            const resizeCanvas = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            };
+
+            // Particle Class
+            class Particle {
+                constructor(w, h) {
+                    // Start particles randomly across the screen
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.radius = 40 + Math.random() * 60;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                }
+
+                update(w, h) {
+                    // Apply gravity
+                    this.vy += GRAVITY;
+
+                    // Apply drag
+                    this.vx *= DRAG;
+                    this.vy *= DRAG;
+
+                    // Limit speed
+                    this.vx = Math.max(-MAX_SPEED, Math.min(this.vx, MAX_SPEED));
+                    this.vy = Math.max(-MAX_SPEED, Math.min(this.vy, MAX_SPEED));
+
+                    // Update position
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Wall collision (bounce softly)
+                    if (this.x - this.radius < 0 || this.x + this.radius > w) {
+                        this.vx *= -0.7; // Softer bounce
+                        this.x = this.x - this.radius < 0 ? this.radius : w - this.radius;
+                    }
+
+                    if (this.y - this.radius < 0) {
+                        // Bounce off top
+                        this.vy *= -0.4;
+                        this.y = this.radius;
+                    } else if (this.y > h + 100) {
+                        // Recycle particle if it falls off bottom (teleport to the top)
+                        this.y = -this.radius - Math.random() * 50;
+                        this.vy = 0;
+                        this.x = Math.random() * w;
+                    }
+                }
+
+                draw(ctx) {
+                    ctx.beginPath();
+                    // Low opacity red for the glowing/metaball look
+                    ctx.fillStyle = `rgba(223, 37, 49, 0.15)`; 
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Initialization
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            let particles = [];
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push(new Particle(canvas.width, canvas.height));
+            }
+
+            // Animation Loop
+            const animate = () => {
+                // Clear the canvas with the background color
+                ctx.fillStyle = BACKGROUND_COLOR;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Add a soft blur filter for the "liquid" or "metaball" effect
+                ctx.filter = 'blur(15px)';
+
+                // Update and draw all particles
+                particles.forEach(p => {
+                    p.update(canvas.width, canvas.height);
+                    p.draw(ctx);
+                });
+                
+                // Reset filter for rest of the page (though no other canvas elements exist)
+                ctx.filter = 'none';
+
+                animationFrameId = requestAnimationFrame(animate);
+            };
+
+            animate();
+
+            // Cleanup (though this is a single page app)
+            // window.onbeforeunload = () => {
+            //     window.removeEventListener('resize', resizeCanvas);
+            //     cancelAnimationFrame(animationFrameId);
+            // };
+        };
+    </script>
 </body>
 </html>
